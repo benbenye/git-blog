@@ -17,8 +17,3 @@ export default function(token = localStorage.getItem("github-token")) {
     headers: headers
   });
 }
-//a5d793321625d6a13b0bfd606f34a7c85608b886
-
-export const githubOauth = axios.create({
-  baseURL: "https://github.com"
-});
