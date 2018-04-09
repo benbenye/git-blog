@@ -13,6 +13,12 @@ import config from "../config";
 export default {
   name: "comment",
   components: {},
+  props: {
+    number: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       commentToken: "",
@@ -31,8 +37,7 @@ export default {
         return;
       }
       http(this.commentToken)
-        .post(`${config.repoPath}/issues`, {
-          title: "Found a bug",
+        .post(`${config.commentPath}/issues/${this.number}/comments`, {
           body: "I'm having a problem with this."
         })
         .then(() => {

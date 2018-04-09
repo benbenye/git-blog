@@ -65,11 +65,26 @@ export default {
       });
     },
     create: function() {
-      http().put(`${config.repoPath}/contents/${this.title}`, {
-        path: this.title,
-        message: this.commitMes,
-        content: btoa(unescape(encodeURIComponent(this.createInput)))
-      });
+      //      新建文章之前先创建issue，绑定issue id
+      http()
+        .post(`${config.commentPath}/issues`, {
+          title: this.title
+        })
+        .then(res => {
+          return http().put(
+            `${config.repoPath}/contents/${"[issue-" +
+              res.data.number +
+              "]" +
+              this.title}`,
+            {
+              message: this.commitMes,
+              content: btoa(unescape(encodeURIComponent(this.createInput)))
+            }
+          );
+        })
+        .then(res => {
+          console.log(res.data);
+        });
     }
   }
 };

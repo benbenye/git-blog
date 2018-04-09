@@ -1,7 +1,7 @@
 <template>
   <div class="blog">
     <div v-html="html"></div>
-    <comment></comment>
+    <comment :number="number"></comment>
   </div>
 </template>
 <script>
@@ -17,20 +17,22 @@ export default {
   data() {
     return {
       contents: null,
-      html: ""
+      html: "",
+      number: 0
     };
   },
   mounted() {
     http()
       .get(`${config.repoPath}/contents/${this.$route.params.path}`)
       .then(res => {
-        if (res.status <= 299) {
-          this.contents = res.data;
-          this.html = marked(
-            decodeURIComponent(escape(atob(this.contents.content))),
-            { sanitize: true }
-          );
-        }
+        this.contents = res.data;
+        this.html = marked(
+          decodeURIComponent(escape(atob(this.contents.content))),
+          { sanitize: true }
+        );
+        const result = this.$route.params.path.match(/\[issue-(\d*)\]/);
+        this.number = result && +result[1];
+        //          如果没有拿到number
       });
   }
 };
