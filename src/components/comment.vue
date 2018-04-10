@@ -1,7 +1,15 @@
 <template>
   <div class="comment">
-
+    <div class="comment-list">
+      <ul>
+        <li v-for="(item, index) in comments" :key="index">
+          <img :src="item.user.avatar_url" :alt="item.user.login">
+          {{item.body}}
+        </li>
+      </ul>
+    </div>
     <input type="text" v-model="commentToken" v-if="!localCommentToken">
+    <textarea v-model="comment"></textarea>
     <button @click="commit">提交</button>
   </div>
 </template>
@@ -23,13 +31,20 @@ export default {
   data() {
     return {
       commentToken: "",
-      localCommentToken: ""
+      localCommentToken: "",
+      comments: [],
+      comment: ""
     };
   },
   mounted() {
     this.localCommentToken = this.commentToken = localStorage.getItem(
       "comment-token"
     );
+    http(this.commentToken)
+      .get(`${config.commentPath}/issues/${this.number}/comments`)
+      .then(res => {
+        this.comments = res.data;
+      });
   },
   methods: {
     commit: function() {
@@ -39,13 +54,14 @@ export default {
       }
       http(this.commentToken)
         .post(`${config.commentPath}/issues/${this.number}/comments`, {
-          body: "I'm having a problem with this."
+          body: this.comment
         })
         .then(() => {
           if (!Data.commentToken) {
             localStorage.setItem("comment-token", this.commentToken);
             Data.commentToken = this.localCommentToken = this.commentToken;
           }
+          alert("commit success");
         })
         .catch(() => {
           alert("Your token illegal");

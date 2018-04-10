@@ -1,7 +1,7 @@
 <template>
   <div class="blog">
     <div v-html="html"></div>
-    <comment :number="number"></comment>
+    <comment v-if="number" :number="number"></comment>
   </div>
 </template>
 <script>
@@ -30,9 +30,9 @@ export default {
           decodeURIComponent(escape(atob(this.contents.content))),
           { sanitize: true }
         );
-        const result = this.$route.params.path.match(/\[issue-(\d*)\]/);
+        if (!config.isUseIssue) return;
+        const result = this.$route.params.path.match(/\[(\d*)\]/);
         this.number = result && +result[1];
-        //          如果没有拿到number
       });
   }
 };
