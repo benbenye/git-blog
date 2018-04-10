@@ -3,6 +3,7 @@
     <template v-if="type === 'edit'">
       <textarea v-model="input" @input="updateContent"></textarea>
       <div v-html="compiledMarkdown"></div>
+      <input type="text" v-model="title" placeholder="文章标题">
       <div id="update" @click="update">更新</div>
     </template>
     <template v-else>
@@ -19,7 +20,7 @@
 import marked from "marked";
 import _ from "lodash";
 import http from "../utils/client-axios";
-import config from "../config";
+import config from "../blog.config";
 
 export default {
   name: "MarkedEditor",
@@ -39,8 +40,11 @@ export default {
         this.type === "edit" &&
         decodeURIComponent(escape(atob(this.editor.content))),
       createInput: "",
-      title: "unnamed.md",
-      commitMes: "commit"
+      title: this.filterUniqueId(
+        this.type === "edit" ? this.editor.path : "unnamed.md"
+      ),
+      commitMes: "commit",
+      uniqueTitle: ""
     };
   },
   computed: {
@@ -58,33 +62,73 @@ export default {
       this.createInput = e.target.value;
     }, 300),
     update: function() {
-      http().put(`${config.repoPath}/contents/${this.editor.path}`, {
-        message: this.commitMes,
-        sha: this.editor.sha,
-        content: btoa(unescape(encodeURIComponent(this.input)))
-      });
+      if (
+        this.editor.path ===
+        `[${this.editor.path.match(/\[(\d*)\]/)[1]}]${this.title}`
+      ) {
+        http().put(`${config.repoPath}/contents/${this.editor.path}`, {
+          message: this.commitMes,
+          sha: this.editor.sha,
+          content: btoa(unescape(encodeURIComponent(this.input)))
+        });
+      } else {
+        this.create().then(() => {
+          http().delete(
+            `${config.repoPath}/contents/${
+              this.editor.path
+            }?message=delete&sha=${this.editor.sha}`
+          );
+        });
+      }
     },
     create: function() {
-      //      新建文章之前先创建issue，绑定issue id
-      http()
-        .post(`${config.commentPath}/issues`, {
-          title: this.title
-        })
-        .then(res => {
-          return http().put(
-            `${config.repoPath}/contents/${"[issue-" +
-              res.data.number +
-              "]" +
-              this.title}`,
-            {
+      if (config.isUseIssue) {
+        if (this.type === "edit") {
+          this.uniqueTitle = `[${this.editor.path.match(/\[(\d*)\]/)[1]}]${
+            this.title
+          }`;
+          return http()
+            .put(`${config.repoPath}/contents/${this.uniqueTitle}`, {
               message: this.commitMes,
-              content: btoa(unescape(encodeURIComponent(this.createInput)))
-            }
-          );
-        })
-        .then(res => {
-          console.log(res.data);
-        });
+              content: btoa(unescape(encodeURIComponent(this.input)))
+            })
+            .then()
+            .catch(() => {});
+        }
+        return http()
+          .post(`${config.commentPath}/issues`, {
+            title: this.title,
+            body: "https://benbenye.github.io"
+          })
+          .then(res => {
+            this.uniqueTitle = `[${res.data.number}]${this.title}`;
+            return http().put(
+              `${config.repoPath}/contents/${this.uniqueTitle}`,
+              {
+                message: this.commitMes,
+                content: btoa(unescape(encodeURIComponent(this.createInput)))
+              }
+            );
+          })
+          .catch(() => {});
+      } else {
+        let title = "";
+        if (this.type === "edit") {
+          title = `[${this.editor.path.match(/\[(\d*)\]/)[1]}]${this.title}`;
+        } else {
+          title = this.title;
+        }
+        return http()
+          .put(`${config.repoPath}/contents/${title}`, {
+            message: this.commitMes,
+            content: btoa(unescape(encodeURIComponent(this.createInput)))
+          })
+          .then()
+          .catch(() => {});
+      }
+    },
+    filterUniqueId: function(str) {
+      return str.match(/\[\d*\]/) ? str.replace(/(\[\d*\])/, "") : str;
     }
   }
 };

@@ -3,5 +3,6 @@
  */
 export default {
   repoPath: "/repos/benbenye/benbenye.github.io",
-  commentPath: "/repos/benbenye/test-issue"
+  commentPath: "/repos/benbenye/test-issue",
+  isUseIssue: true
 };

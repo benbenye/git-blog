@@ -8,7 +8,7 @@
 import marked from "marked";
 import http from "../utils/client-axios";
 import Comment from "../components/comment.vue";
-import config from "../config";
+import config from "../blog.config";
 
 export default {
   components: {

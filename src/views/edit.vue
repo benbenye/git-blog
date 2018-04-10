@@ -5,7 +5,7 @@
 </template>
 <script>
 import http from "../utils/client-axios";
-import config from "../config";
+import config from "../blog.config";
 import MarkedEditor from "../components/marked-editor.vue";
 
 export default {

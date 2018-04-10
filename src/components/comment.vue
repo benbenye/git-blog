@@ -1,5 +1,6 @@
 <template>
   <div class="comment">
+
     <input type="text" v-model="commentToken" v-if="!localCommentToken">
     <button @click="commit">提交</button>
   </div>
@@ -8,7 +9,7 @@
 <script>
 import Data from "../store/data";
 import http from "../utils/client-axios";
-import config from "../config";
+import config from "../blog.config";
 
 export default {
   name: "comment",

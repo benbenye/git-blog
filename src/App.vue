@@ -14,7 +14,7 @@
 <script>
 import Data from "./store/data";
 import http from "./utils/client-axios";
-import config from "./config";
+import config from "./blog.config";
 
 export default {
   name: "App",

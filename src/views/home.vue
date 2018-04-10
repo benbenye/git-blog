@@ -16,7 +16,7 @@
 <script>
 import Data from "../store/data";
 import http from "../utils/client-axios";
-import config from "../config";
+import config from "../blog.config";
 
 export default {
   name: "home",
@@ -41,11 +41,16 @@ export default {
       return http().get(`${config.repoPath}/contents/${path}`);
     },
     cut: function(file) {
-      http().delete(
-        `${config.repoPath}/contents/${file.path}?message=delete&sha=${
-          file.sha
-        }`
-      );
+      http()
+        .delete(
+          `${config.repoPath}/contents/${file.path}?message=delete&sha=${
+            file.sha
+          }`
+        )
+        .then(() => {
+          alert("delete success");
+        })
+        .catch(() => {});
     }
   }
 };
