@@ -5,12 +5,27 @@ li {
   margin: 0;
   list-style: none;
 }
-
-p {
+a{
+  text-decoration: none;
+}
+p, body {
   margin: 0;
 }
 
 img {
   vertical-align: top;
   max-width: 100%;
+}
+
+input[type=password], input[type=text], input[type=url], textarea{
+  resize: none;
+  outline: none;
+  padding: .6rem;
+  width: 100%;
+  box-shadow: none;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  transition: border .3s;
+  background-color: #fff;
+  box-sizing: border-box;
 }

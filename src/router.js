@@ -8,6 +8,7 @@ import NewBlog from "./views/new-blog.vue";
 Vue.use(Router);
 
 export default new Router({
+  mode: "history",
   routes: [
     {
       path: "/",
@@ -27,6 +28,16 @@ export default new Router({
     {
       path: "/new-blog",
       name: "new-blog",
+      component: NewBlog
+    },
+    {
+      path: "/about",
+      name: "about",
+      component: NewBlog
+    },
+    {
+      path: "/contents",
+      name: "contents",
       component: NewBlog
     }
   ]

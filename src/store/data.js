@@ -3,5 +3,6 @@
  */
 export default {
   token: "",
-  commentToken: ""
+  commentToken: "",
+  path: ""
 };

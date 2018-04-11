@@ -1,12 +1,21 @@
 <template>
   <div id="app">
-    <template v-if="!Data.token">
+    <nav :class="{active: isHome}">
+      <li>
+        <router-link to="/">首页</router-link>
+      </li>
+      <li>
+        <router-link to="/about">关于</router-link>
+      </li>
+      <li>
+        <router-link to="/contents">归档</router-link>
+      </li>
+    </nav>
+    <div class="token" v-if="!Data.token">
       <input type="text" placeholder="请填写您的 github token，已确认您的身份" v-model="token">
-      <div class="btn" @click="setToken">提交</div>
-    </template>
-    <div id="nav">
-      <router-link to="/">Home</router-link>
+      <button class="btn" @click="setToken">提交</button>
     </div>
+    <router-link to="/new-blog" v-if="Data.token && Data.path === '/'" class="new-btn">新建博客</router-link>
     <router-view/>
   </div>
 </template>
@@ -23,6 +32,9 @@ export default {
       token: Data.token,
       Data: Data
     };
+  },
+  created() {
+    Data.path = this.$route.path;
   },
   mounted() {
     Data.token = this.token = localStorage.getItem("github-token");
@@ -65,4 +77,55 @@ export default {
 
 <style lang="scss" type="text/scss">
 @import "./common/scss/base";
+#app {
+  &.active {
+    position: fixed;
+  }
+  nav {
+    padding: 18px 30px;
+    display: inline-block;
+    li {
+      position: relative;
+      display: initial;
+      padding-right: 20px;
+      a {
+        color: #5a5a5a;
+        &:hover {
+          color: #4786d6;
+        }
+        &.current {
+          color: #5a5a5a;
+          padding-bottom: 22px;
+          border-bottom: 1px solid #5a5a5a;
+        }
+      }
+    }
+  }
+  .token {
+    display: inline-block;
+    input {
+      width: 260px;
+      margin-right: 20px;
+    }
+    .btn {
+      width: 72px;
+      height: 36px;
+      background-color: #007fff;
+      color: #ffffff;
+      float: right;
+      outline: none;
+      border-radius: 4px;
+    }
+  }
+  .new-btn {
+    display: inline-block;
+    text-align: center;
+    width: 72px;
+    line-height: 36px;
+    background-color: #007fff;
+    color: #ffffff;
+    outline: none;
+    border-radius: 4px;
+  }
+}
 </style>

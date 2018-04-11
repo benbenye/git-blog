@@ -6,6 +6,7 @@
 
 <script>
 import MarkedEditor from "../components/marked-editor.vue";
+import Data from "../store/data";
 
 export default {
   name: "new-blog",
@@ -16,6 +17,9 @@ export default {
     return {
       editor: {}
     };
+  },
+  created() {
+    Data.path = this.$route.path;
   }
 };
 </script>

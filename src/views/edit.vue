@@ -7,6 +7,7 @@
 import http from "../utils/client-axios";
 import config from "../blog.config";
 import MarkedEditor from "../components/marked-editor.vue";
+import Data from "../store/data";
 
 export default {
   components: {
@@ -17,6 +18,9 @@ export default {
       contents: null,
       type: "edit"
     };
+  },
+  created() {
+    Data.path = this.$route.path;
   },
   mounted() {
     http()

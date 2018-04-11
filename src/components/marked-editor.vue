@@ -1,18 +1,18 @@
 <template>
-  <div id="editor">
-    <template v-if="type === 'edit'">
-      <textarea v-model="input" @input="updateContent"></textarea>
-      <div v-html="compiledMarkdown"></div>
-      <input type="text" v-model="title" placeholder="文章标题">
-      <div id="update" @click="update">更新</div>
-    </template>
-    <template v-else>
-      <textarea v-model="createInput" @input="updateCreateContent"></textarea>
-      <div v-html="compiledMarkdown"></div>
-      <input type="text" v-model="title" placeholder="文章标题">
-      <div id="create" @click="create">新建</div>
-    </template>
-    <textarea v-model="commitMes"></textarea>
+  <div class="editor">
+    <input class="header" type="text" v-model="title" placeholder="文章标题">
+
+    <button v-if="type === 'edit'" class="update commit" @click="update">更新</button>
+    <button v-else class="create commit" @click="create">新建</button>
+    <div class="main" v-if="type === 'edit'">
+      <textarea class="editor-input" v-model="input" @input="updateContent"></textarea>
+      <div class="content-preview" v-html="compiledMarkdown"></div>
+    </div>
+    <div class="main" v-else>
+      <textarea class="editor-input" v-model="createInput" @input="updateCreateContent"></textarea>
+      <div class="content-preview" v-html="compiledMarkdown"></div>
+    </div>
+    <!--<textarea v-model="commitMes"></textarea>-->
   </div>
 </template>
 
@@ -40,9 +40,7 @@ export default {
         this.type === "edit" &&
         decodeURIComponent(escape(atob(this.editor.content))),
       createInput: "",
-      title: this.filterUniqueId(
-        this.type === "edit" ? this.editor.path : "unnamed.md"
-      ),
+      title: this.filterUniqueId(this.type === "edit" ? this.editor.path : ""),
       commitMes: "commit",
       uniqueTitle: ""
     };
@@ -135,35 +133,73 @@ export default {
 </script>
 
 <style lang="scss" type="text/scss">
-#editor {
-  margin: 0;
-  height: 100%;
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  color: #333;
-}
-
-textarea,
-#editor div {
-  display: inline-block;
-  width: 49%;
-  height: 100%;
-  vertical-align: top;
-  box-sizing: border-box;
-  padding: 0 20px;
-}
-
-textarea {
-  border: none;
-  border-right: 1px solid #ccc;
-  resize: none;
-  outline: none;
-  background-color: #f6f6f6;
-  font-size: 14px;
-  font-family: "Monaco", courier, monospace;
-  padding: 20px;
-}
-
-code {
-  color: #f66;
+.editor {
+  .commit {
+    position: fixed;
+    top: 10px;
+    right: 30px;
+    display: inline-block;
+    text-align: center;
+    width: 72px;
+    line-height: 36px;
+    background-color: #007fff;
+    color: #ffffff;
+    outline: none;
+    border-radius: 4px;
+  }
+  .header {
+    display: flex;
+    font-weight: 700;
+    font-size: 24px;
+    align-items: center;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    padding: 0 16px;
+    width: 100%;
+    height: 60px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    z-index: 100;
+  }
+  .main {
+    display: flex;
+    position: absolute;
+    top: 120px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    .editor-input,
+    .content-preview {
+      flex: 1 1 50%;
+      height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .editor-input {
+      background-color: #f8f9fa;
+    }
+    .content-preview {
+      position: relative;
+      background-color: #fff;
+      overflow: hidden;
+    }
+    textarea {
+      border: none;
+      border-right: 1px solid #ccc;
+      resize: none;
+      outline: none;
+      background-color: #f6f6f6;
+      font-size: 14px;
+      font-family: "Monaco", courier, monospace;
+      padding: 20px;
+    }
+    code {
+      color: #f66;
+    }
+  }
 }
 </style>
