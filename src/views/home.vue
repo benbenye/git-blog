@@ -11,13 +11,11 @@
           </template>
         </h3>
       </div>
-      <div class="post-content">
-        <p>This is a image test post.</p>
-      </div>
-      <div class="post-footer">
+      <div class="post-content" v-html="filesContent[index]"></div>
+      <div class="post-footer" v-if="filesTime[index]">
         <div class="meta">
           <div class="info">
-            <i class="fa fa-sun-o"></i><span class="date">2016-12-26</span><i class="fa fa-tag"></i>
+            <i class="fa fa-sun-o"></i><span class="date">{{filesTime[index].data.created_at | filterTime}}</span><i class="fa fa-tag"></i>
           </div>
         </div>
       </div>
@@ -27,6 +25,7 @@
 </template>
 
 <script>
+import marked from "marked";
 import Data from "../store/data";
 import http from "../utils/client-axios";
 import config from "../blog.config";
@@ -37,6 +36,8 @@ export default {
   data() {
     return {
       files: [],
+      filesContent: [],
+      filesTime: [],
       Data: Data
     };
   },
@@ -47,14 +48,43 @@ export default {
     http()
       .get(`${config.repoPath}/contents`)
       .then(res => {
-        if (res.status <= 299) {
-          this.files = res.data;
-        }
+        this.files = res.data;
+        return Promise.all(this.files.map(e => this.getFileContents(e.path)));
+      })
+      .then(res => {
+        this.filesContent = res.map(e => {
+          let con = decodeURIComponent(escape(atob(e.data.content)));
+          let s = !!con.match(/([^]*)<!--more-->/m);
+          return marked(s ? con.match(/([^]*)<!--more-->/m)[1] : con, {
+            sanitize: true
+          });
+        });
+        return Promise.all(
+          this.files.map(e =>
+            this.getFileTime(
+              e.path.match(/\[(\d*)\]/) ? e.path.match(/\[(\d*)\]/)[1] : null
+            )
+          )
+        );
+      })
+      .then(res => {
+        this.filesTime = res;
       });
+  },
+  filters: {
+    filterTime: function(str) {
+      let time = new Date(str);
+      return `${time.getFullYear()}年${time.getMonth() +
+        1}月${time.getDay()}日 ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+    }
   },
   methods: {
     getFileContents: function(path) {
       return http().get(`${config.repoPath}/contents/${path}`);
+    },
+    getFileTime: function(number) {
+      if (number) return http().get(`${config.commentPath}/issues/${number}`);
+      return null;
     },
     cut: function(file) {
       http()
