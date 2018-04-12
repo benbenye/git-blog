@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <nav :class="{active: isHome}">
+    <nav :class="{active: Data.path === '/'}">
       <li>
         <router-link to="/">首页</router-link>
       </li>
