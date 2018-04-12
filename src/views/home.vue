@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="post animated fadeInDown"
-         v-for="(item, index) in files" v-if="item.type === 'file'" :key="index">
+         v-for="(item, index) in files" v-if="item.type === 'file' && item.path !== 'test-token'" :key="index">
       <div class="post-title">
         <h3>
           <router-link :to="{name:'blog', params: {path: item.path}}">{{item.name}}</router-link>
