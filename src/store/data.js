@@ -3,6 +3,6 @@
  */
 export default {
   token: "",
-  commentToken: "",
+  userType: "",
   path: ""
 };

@@ -2,9 +2,6 @@
   <div class="comment">
     <div class="comment-title">评论</div>
     <div class="comment-form">
-      <input class="token-input" type="text"
-             placeholder="请填写你的github token 以添加评论"
-             v-model="commentToken" v-if="!localCommentToken">
       <textarea class="content-input" v-model="comment" placeholder="说说你的看法"></textarea>
       <button @click="commit" class="submit-btn">提交</button>
     </div>
@@ -45,7 +42,6 @@
 </template>
 
 <script>
-import Data from "../store/data";
 import http from "../utils/client-axios";
 import config from "../blog.config";
 
@@ -60,17 +56,12 @@ export default {
   },
   data() {
     return {
-      commentToken: "",
-      localCommentToken: "",
       comments: [],
       comment: ""
     };
   },
   mounted() {
-    this.localCommentToken = this.commentToken = localStorage.getItem(
-      "comment-token"
-    );
-    http(this.commentToken)
+    http()
       .get(`${config.commentPath}/issues/${this.number}/comments`)
       .then(res => {
         this.comments = res.data;
@@ -78,20 +69,13 @@ export default {
   },
   methods: {
     commit: function() {
-      if (!this.commentToken) {
-        alert("please input your token for add an issue");
-        return;
-      }
-      http(this.commentToken)
+      http()
         .post(`${config.commentPath}/issues/${this.number}/comments`, {
           body: this.comment
         })
         .then(() => {
-          if (!Data.commentToken) {
-            localStorage.setItem("comment-token", this.commentToken);
-            Data.commentToken = this.localCommentToken = this.commentToken;
-          }
           alert("commit success");
+          window.location.reload();
         })
         .catch(() => {
           alert("Your token illegal");

@@ -5,7 +5,7 @@
       <div class="post-title">
         <h3>
           <router-link :to="{name:'blog', params: {path: item.path}}">{{item.name}}</router-link>
-          <template v-if="Data.token">
+          <template v-if="Data.userType == 'admin'">
             <router-link :to="{name:'edit', params: {path: item.path}}"> [修改]</router-link>
             <span class="delete" @click="cut(item)">[删除]</span>
           </template>
@@ -69,6 +69,9 @@ export default {
       })
       .then(res => {
         this.filesTime = res;
+        http()
+          .get("/user")
+          .then(res => console.log(res));
       });
   },
   filters: {

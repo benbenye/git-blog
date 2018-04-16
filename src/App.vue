@@ -11,9 +11,10 @@
         <router-link to="/contents">归档</router-link>
       </li>
     </nav>
+
     <div class="token" v-if="!Data.token">
-      <input type="text" placeholder="请填写您的 github token，已确认您的身份" v-model="token">
-      <button class="btn" @click="setToken">提交</button>
+      <input type="text" placeholder="请填写您的 github token" v-model="token">
+      <button class="btn" @click="login(token)">登录</button>
     </div>
     <router-link to="/new-blog" v-if="Data.token && Data.path === '/'" class="new-btn">新建博客</router-link>
     <router-view/>
@@ -22,8 +23,7 @@
 
 <script>
 import Data from "./store/data";
-import http from "./utils/client-axios";
-import config from "./blog.config";
+import { login } from "./utils/index";
 
 export default {
   name: "App",
@@ -37,46 +37,23 @@ export default {
     Data.path = this.$route.path;
   },
   mounted() {
-    Data.token = this.token = localStorage.getItem("github-token");
+    if (localStorage.getItem("github-token")) {
+      Data.token = this.token = localStorage
+        .getItem("github-token")
+        .split(" ")[1];
+      Data.userType = localStorage.getItem("github-token").split(" ")[0];
+      login();
+    }
   },
   methods: {
-    setToken: function() {
-      this.testToken().then(res => {
-        if (res === "ok") {
-          Data.token = this.token;
-          localStorage.setItem("github-token", this.token);
-          alert("token is ok");
-        } else {
-          alert("sorry, you haven't access to this blog");
-        }
-      });
-    },
-    testToken: function() {
-      return http()
-        .get(`${config.repoPath}/contents/test-token`)
-        .then(res => {
-          return http(this.token).put(
-            `${config.repoPath}/contents/test-token`,
-            {
-              message: "test token",
-              sha: res.data.sha,
-              content: ""
-            }
-          );
-        })
-        .then(() => {
-          return "ok";
-        })
-        .catch(() => {
-          return false;
-        });
-    }
+    login: login
   }
 };
 </script>
 
 <style lang="scss" type="text/scss">
 @import "./common/scss/base";
+
 #app {
   &.active {
     position: fixed;
