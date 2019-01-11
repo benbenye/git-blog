@@ -19,7 +19,7 @@
 <script>
 import marked from "marked";
 import _ from "lodash";
-import http from "../utils/client-axios";
+import http from "../utils/http-client";
 import config from "../blog.config";
 
 export default {

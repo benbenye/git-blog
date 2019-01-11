@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import http from "../utils/client-axios";
+import http from "../utils/http-client";
 import config from "../blog.config";
 import MarkedEditor from "../components/marked-editor.vue";
 import Data from "../store/data";
