@@ -2,9 +2,10 @@
   <div class="blog">
     <div class="post animated fadeInDown">
       <div class="post-title">
-        <h3>{{contents && contents.path}}</h3>
+        <h3>{{title}}</h3>
       </div>
       <div class="post-content" v-html="html">
+
       </div>
       <div class="post-footer">
         <div class="meta">
@@ -14,14 +15,15 @@
         </div>
       </div>
     </div>
-    <comment v-if="number" :number="number"></comment>
+    <!-- <comment v-if="number" :number="number"></comment> -->
   </div>
 </template>
 <script>
 import marked from "marked";
-import http from "../utils/client-axios";
+import { graphQL } from "../utils/http-client";
 import Comment from "../components/comment.vue";
 import config from "../blog.config";
+import querys from "../utils/querys";
 import Data from "../store/data";
 
 export default {
@@ -32,21 +34,21 @@ export default {
     return {
       contents: null,
       html: "",
-      number: 0
+      number: 0,
+      title: this.$route.params.path
     };
   },
   created() {
-    Data.path = this.$route.path;
+    Data.path = this.$route.params.path;
   },
   mounted() {
-    http()
-      .get(`${config.repoPath}/contents/${this.$route.params.path}`)
-      .then(res => {
-        this.contents = res.data;
-        this.html = marked(
-          decodeURIComponent(escape(atob(this.contents.content))),
-          { sanitize: true }
-        );
+    graphQL()
+      .request(querys.getBlobContent, {
+        name: `${config.branch}:${this.title}`
+      })
+      .then(data => {
+        this.contents = data.repository.object.text;
+        this.html = marked(this.contents, { sanitize: true });
         if (!config.isUseIssue) return;
         const result = this.$route.params.path.match(/\[(\d*)\]/);
         this.number = result && +result[1];

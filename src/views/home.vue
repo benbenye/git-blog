@@ -1,12 +1,16 @@
 <template>
   <div class="home">
-    <div class="post animated fadeInDown"
-         v-for="(item, index) in files" v-if="item.type === 'file' && item.path !== 'test-token'" :key="index">
+    <div
+      class="post animated fadeInDown"
+      v-for="(item, index) in files"
+      v-if="item.type === 'blob' && item.name !== 'test-token'"
+      :key="index"
+    >
       <div class="post-title">
         <h3>
-          <router-link :to="{name:'blog', params: {path: item.path}}">{{item.name}}</router-link>
+          <router-link :to="{name:'blog', params: {path: item.name}}">{{item.name}}</router-link>
           <template v-if="Data.userType == 'admin'">
-            <router-link :to="{name:'edit', params: {path: item.path}}"> [修改]</router-link>
+            <router-link :to="{name:'edit', params: {path: item.name}}">[修改]</router-link>
             <span class="delete" @click="cut(item)">[删除]</span>
           </template>
         </h3>
@@ -15,20 +19,21 @@
       <div class="post-footer" v-if="filesTime[index]">
         <div class="meta">
           <div class="info">
-            <i class="fa fa-sun-o"></i><span class="date">{{filesTime[index].data.created_at | filterTime}}</span><i class="fa fa-tag"></i>
+            <i class="fa fa-sun-o"></i>
+            <span class="date">{{filesTime[index].data.created_at | filterTime}}</span>
+            <i class="fa fa-tag"></i>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
-import marked from "marked";
 import Data from "../store/data";
-import http from "../utils/client-axios";
+import http, { graphQL } from "../utils/http-client";
 import config from "../blog.config";
+import querys from "../utils/querys";
 
 export default {
   name: "home",
@@ -45,34 +50,17 @@ export default {
     Data.path = this.$route.path;
   },
   mounted() {
-    http()
-      .get(`${config.repoPath}/contents`)
-      .then(res => {
-        this.files = res.data;
-        return Promise.all(this.files.map(e => this.getFileContents(e.path)));
-      })
-      .then(res => {
-        this.filesContent = res.map(e => {
-          let con = decodeURIComponent(escape(atob(e.data.content)));
-          let s = !!con.match(/([^]*)<!--more-->/m);
-          return marked(s ? con.match(/([^]*)<!--more-->/m)[1] : con, {
-            sanitize: true
-          });
-        });
-        return Promise.all(
-          this.files.map(e =>
-            this.getFileTime(
-              e.path.match(/\[(\d*)\]/) ? e.path.match(/\[(\d*)\]/)[1] : null
-            )
-          )
-        );
-      })
-      .then(res => {
-        this.filesTime = res;
-        http()
-          .get("/user")
-          .then(res => console.log(res));
+    graphQL()
+      .request(querys.getList)
+      .then(data => {
+        this.files = data.repository.defaultBranchRef.target.tree.entries;
       });
+    const variables = {
+      name: "vue-page:TODO-1：数组去重方法大全.md"
+    };
+    graphQL()
+      .request(querys.getBlobContent, variables)
+      .then();
   },
   filters: {
     filterTime: function(str) {
