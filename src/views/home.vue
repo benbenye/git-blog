@@ -11,7 +11,7 @@
           <router-link :to="{name:'blog', params: {title: item.name}}">{{item.name}}</router-link>
           <template v-if="Data.userType == 'admin'">
             <router-link :to="{name:'edit', params: {title: item.name}}">[修改]</router-link>
-            <span class="delete" @click="cut(item)">[删除]</span>
+            <!-- <span class="delete" @click="cut(item)">[删除]</span> -->
           </template>
         </h3>
       </div>

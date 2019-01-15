@@ -3,6 +3,7 @@ import Router from "vue-router";
 import Home from "./views/home.vue";
 import Edit from "./views/edit.vue";
 import Blog from "./views/blog.vue";
+import AboutMe from "./views/about-me.vue";
 import NewBlog from "./views/new-blog.vue";
 
 Vue.use(Router);
@@ -33,7 +34,7 @@ export default new Router({
     {
       path: "/about",
       name: "about",
-      component: NewBlog
+      component: AboutMe
     },
     {
       path: "/contents",
