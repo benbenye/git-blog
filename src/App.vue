@@ -37,13 +37,8 @@ export default {
     Data.path = this.$route.path;
   },
   mounted() {
-    if (localStorage.getItem("github-token")) {
-      Data.token = this.token = localStorage
-        .getItem("github-token")
-        .split(" ")[1];
-      Data.userType = localStorage.getItem("github-token").split(" ")[0];
-      login();
-    }
+    const token = localStorage.getItem("github-token");
+    token && login(token);
   },
   methods: {
     login: login

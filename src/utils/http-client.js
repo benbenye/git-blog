@@ -21,9 +21,25 @@ export default function(token = localStorage.getItem("github-token")) {
 }
 
 export const graphQL = function(token = localStorage.getItem("github-token")) {
-  let headers = { Authorization: `token ${process.env.VUE_APP_TOKEN}` };
+  let headers = { Authorization: `token ${config.token.join("")}` };
   if (token) {
-    headers.Authorization = `token ${token.split(" ")[1]}`;
+    headers.Authorization = `token ${token}`;
+  }
+  const client = new GraphQLClient(config.endpoint, { headers: headers });
+  return client;
+};
+
+export const graphQLForIssue = function(
+  token = localStorage.getItem("github-token")
+) {
+  // eslint-disable-next-line no-undef
+  const env = process.env;
+  let headers = { Authorization: `token ${config.token.join("")}` };
+  if (token) {
+    headers.Authorization = `token ${token}`;
+  }
+  if (env.VUE_APP_ISSUE_PREVIEW) {
+    headers.Accept = env.VUE_APP_ISSUE_PREVIEW;
   }
   const client = new GraphQLClient(config.endpoint, { headers: headers });
   return client;
