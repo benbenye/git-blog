@@ -24,6 +24,7 @@
 <script>
 import Data from "./store/data";
 import { login } from "./utils/index";
+import blogConfig from "./blog.config";
 
 export default {
   name: "App",
@@ -38,10 +39,8 @@ export default {
   },
   mounted() {
     if (localStorage.getItem("github-token")) {
-      Data.token = this.token = localStorage
-        .getItem("github-token")
-        .split(" ")[1];
-      Data.userType = localStorage.getItem("github-token").split(" ")[0];
+      Data.token = this.token = localStorage.getItem("github-token");
+      if (this.token === blogConfig.token.join("")) Data.userType = "admin";
       login();
     }
   },
