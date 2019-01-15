@@ -7,7 +7,7 @@ import Data from "../store/data";
 
 export default http().get(`${config.repoPath}`);
 
-export const login = function() {
+export function login() {
   const obj = {
     testToken: function(token) {
       this.testAdminToken()
@@ -66,4 +66,8 @@ export const login = function() {
     }
   };
   return obj.testToken;
-};
+}
+
+export function filterTitle(str) {
+  return str.replace(/(\[\d*\])/, "");
+}

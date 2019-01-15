@@ -4,7 +4,7 @@
          v-for="(item, index) in files" v-if="item.type === 'file' && item.path !== 'test-token' && item.path !== 'README.md'" :key="index">
       <div class="post-title">
         <h3>
-          <router-link :to="{name:'blog', params: {path: item.path}}">{{item.name}}</router-link>
+          <router-link :to="{name:'blog', params: {path: item.path}}">{{item.name | filterTitle}}</router-link>
           <template v-if="Data.userType == 'admin'">
             <router-link :to="{name:'edit', params: {path: item.path}}"> [修改]</router-link>
             <span :class="['delete', deleteAble ? '' : 'disable']" @click="cut(item)">[删除]</span>
@@ -28,6 +28,7 @@
 import marked from "marked";
 import Data from "../store/data";
 import http from "../utils/client-axios";
+import { filterTitle } from "../utils";
 import config from "../blog.config";
 
 export default {
@@ -80,7 +81,8 @@ export default {
       let time = new Date(str);
       return `${time.getFullYear()}年${time.getMonth() +
         1}月${time.getDay()}日 ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
-    }
+    },
+    filterTitle
   },
   methods: {
     getFileContents: function(path) {

@@ -2,7 +2,7 @@
   <div class="blog">
     <div class="post animated fadeInDown">
       <div class="post-title">
-        <h3>{{contents && contents.path}}</h3>
+        <h3>{{contents && contents.path | filterTitle}}</h3>
       </div>
       <div class="post-content" v-html="html">
       </div>
@@ -20,6 +20,7 @@
 <script>
 import marked from "marked";
 import http from "../utils/client-axios";
+import { filterTitle } from "../utils";
 import Comment from "../components/comment.vue";
 import config from "../blog.config";
 import Data from "../store/data";
@@ -37,6 +38,9 @@ export default {
   },
   created() {
     Data.path = this.$route.path;
+  },
+  filters: {
+    filterTitle
   },
   mounted() {
     http()
