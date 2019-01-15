@@ -10,7 +10,7 @@ export default function(token = localStorage.getItem("github-token")) {
     "Content-type": "application/json"
   };
   if (token) {
-    headers.Authorization = `token ${token.split(" ")[1]}`;
+    headers.Authorization = `token ${token}`;
   }
   return axios.create({
     baseURL: "https://api.github.com",

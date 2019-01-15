@@ -1,13 +1,13 @@
 <template>
   <div class="home">
     <div class="post animated fadeInDown"
-         v-for="(item, index) in files" v-if="item.type === 'file' && item.path !== 'test-token'" :key="index">
+         v-for="(item, index) in files" v-if="item.type === 'file' && item.path !== 'test-token' && item.path !== 'README.md'" :key="index">
       <div class="post-title">
         <h3>
           <router-link :to="{name:'blog', params: {path: item.path}}">{{item.name}}</router-link>
           <template v-if="Data.userType == 'admin'">
             <router-link :to="{name:'edit', params: {path: item.path}}"> [修改]</router-link>
-            <span class="delete" @click="cut(item)">[删除]</span>
+            <span :class="['delete', deleteAble ? '' : 'disable']" @click="cut(item)">[删除]</span>
           </template>
         </h3>
       </div>
@@ -38,7 +38,8 @@ export default {
       files: [],
       filesContent: [],
       filesTime: [],
-      Data: Data
+      Data: Data,
+      deleteAble: true
     };
   },
   created() {
@@ -71,7 +72,7 @@ export default {
         this.filesTime = res;
         http()
           .get("/user")
-          .then(res => console.log(res));
+          .then();
       });
   },
   filters: {
@@ -90,6 +91,8 @@ export default {
       return null;
     },
     cut: function(file) {
+      if (!this.deleteAble) return;
+      this.deleteAble = false;
       http()
         .delete(
           `${config.repoPath}/contents/${file.path}?message=delete&sha=${
@@ -98,6 +101,7 @@ export default {
         )
         .then(() => {
           alert("delete success");
+          location.reload();
         })
         .catch(() => {});
     }
@@ -110,6 +114,12 @@ export default {
   background-color: #fff;
   margin: 30px;
   .post-title {
+    .delete:hover {
+      cursor: pointer;
+    }
+    .delete.disable:hover {
+      cursor: not-allowed;
+    }
     h3 {
       text-transform: uppercase;
       letter-spacing: 1px;

@@ -3,6 +3,6 @@
  */
 export default {
   token: "",
-  userType: "",
+  userType: "guest",
   path: ""
 };
