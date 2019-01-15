@@ -16,12 +16,12 @@ export default new Router({
       component: Home
     },
     {
-      path: "/edit/:path",
+      path: "/edit/:title",
       name: "edit",
       component: Edit
     },
     {
-      path: "/blog/:path",
+      path: "/blog/:title",
       name: "blog",
       component: Blog
     },

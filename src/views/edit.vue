@@ -4,10 +4,11 @@
   </div>
 </template>
 <script>
-import http from "../utils/http-client";
+import { graphQL } from "../utils/http-client";
 import config from "../blog.config";
 import MarkedEditor from "../components/marked-editor.vue";
 import Data from "../store/data";
+import querys from "../utils/querys";
 
 export default {
   components: {
@@ -16,19 +17,21 @@ export default {
   data() {
     return {
       contents: null,
-      type: "edit"
+      type: "edit",
+      title: this.$route.params.title
     };
   },
   created() {
-    Data.path = this.$route.path;
+    Data.path = this.$route.params.title;
   },
   mounted() {
-    http()
-      .get(`${config.repoPath}/contents/${this.$route.params.path}`)
-      .then(res => {
-        if (res.status <= 299) {
-          this.contents = res.data;
-        }
+    graphQL()
+      .request(querys.getBlobContent, {
+        name: `${config.branch}:${this.title}`
+      })
+      .then(data => {
+        this.contents = data.repository.object;
+        this.contents.title = this.title;
       });
   }
 };

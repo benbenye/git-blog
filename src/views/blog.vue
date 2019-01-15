@@ -35,11 +35,11 @@ export default {
       contents: null,
       html: "",
       number: 0,
-      title: this.$route.params.path
+      title: this.$route.params.title
     };
   },
   created() {
-    Data.path = this.$route.params.path;
+    Data.path = this.$route.params.title;
   },
   mounted() {
     graphQL()

@@ -8,9 +8,9 @@
     >
       <div class="post-title">
         <h3>
-          <router-link :to="{name:'blog', params: {path: item.name}}">{{item.name}}</router-link>
+          <router-link :to="{name:'blog', params: {title: item.name}}">{{item.name}}</router-link>
           <template v-if="Data.userType == 'admin'">
-            <router-link :to="{name:'edit', params: {path: item.name}}">[修改]</router-link>
+            <router-link :to="{name:'edit', params: {title: item.name}}">[修改]</router-link>
             <span class="delete" @click="cut(item)">[删除]</span>
           </template>
         </h3>
@@ -55,12 +55,6 @@ export default {
       .then(data => {
         this.files = data.repository.defaultBranchRef.target.tree.entries;
       });
-    const variables = {
-      name: "vue-page:TODO-1：数组去重方法大全.md"
-    };
-    graphQL()
-      .request(querys.getBlobContent, variables)
-      .then();
   },
   filters: {
     filterTime: function(str) {

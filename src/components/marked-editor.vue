@@ -36,11 +36,9 @@ export default {
   },
   data() {
     return {
-      input:
-        this.type === "edit" &&
-        decodeURIComponent(escape(atob(this.editor.content))),
+      input: this.type === "edit" && this.editor.text,
       createInput: "",
-      title: this.filterUniqueId(this.type === "edit" ? this.editor.path : ""),
+      title: this.filterUniqueId(this.type === "edit" ? this.editor.title : ""),
       commitMes: "commit",
       uniqueTitle: ""
     };
