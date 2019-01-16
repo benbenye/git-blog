@@ -39,13 +39,15 @@ export default {
   },
   mounted() {
     if (localStorage.getItem("github-token")) {
-      Data.token = this.token = localStorage.getItem("github-token");
+      Data.token = this.token = localStorage
+        .getItem("github-token")
+        .split(" ")[1];
       if (this.token === blogConfig.token.join("")) Data.userType = "admin";
-      login();
+      login(this.token);
     }
   },
   methods: {
-    login: login
+    login
   }
 };
 </script>

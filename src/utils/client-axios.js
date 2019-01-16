@@ -3,7 +3,9 @@
  */
 import axios from "axios";
 
-export default function(token = localStorage.getItem("github-token")) {
+export default function(
+  token = localStorage.getItem("github-token").split(" ")[1]
+) {
   let headers = {
     Accept:
       "application/vnd.github.black-panther-preview+json application/vnd.github.symmetra-preview+json",
