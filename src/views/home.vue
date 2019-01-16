@@ -14,6 +14,7 @@
       <div class="post-content" v-html="filesContent[index]"></div>
       <div class="post-footer" v-if="filesTime[index]">
         <div class="meta">
+          评论{{filesTime[index].data.comments || 0}}
           <div class="info">
             <i class="fa fa-sun-o"></i><span class="date">{{filesTime[index].data.created_at | filterTime}}</span><i class="fa fa-tag"></i>
           </div>
@@ -71,9 +72,6 @@ export default {
       })
       .then(res => {
         this.filesTime = res;
-        http()
-          .get("/user")
-          .then();
       });
   },
   filters: {
