@@ -69,5 +69,5 @@ export function login() {
 }
 
 export function filterTitle(str) {
-  return str.replace(/(\[\d*\])/, "");
+  return str && str.replace(/(\[\d*\])/, "");
 }
