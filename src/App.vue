@@ -38,11 +38,10 @@ export default {
     Data.path = this.$route.path;
   },
   mounted() {
-    if (localStorage.getItem("github-token")) {
-      Data.token = this.token = localStorage
-        .getItem("github-token")
-        .split(" ")[1];
-      if (this.token === blogConfig.token.join("")) Data.userType = "admin";
+    if (Data.token) {
+      this.token = Data.token;
+      if (this.token === blogConfig.adminToken.join(""))
+        Data.userType = "admin";
       login(this.token);
     }
   },
